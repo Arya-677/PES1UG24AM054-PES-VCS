@@ -36,6 +36,13 @@ Local screenshot artifacts are saved in the `screenshots/` directory as both ter
   `LDFLAGS='-L/opt/homebrew/opt/openssl@3/lib -lcrypto'`
 - The provided `Index` struct is large, so local artifact-generation commands were run with a higher shell stack limit on macOS. This does not change the repository contents or the Ubuntu-targeted implementation.
 
+## Verification Commands
+
+- `make all`
+- `./test_objects`
+- `./test_tree`
+- `PES_AUTHOR="ARYA DEVANG <PES1UG24AM054>" make test-integration`
+
 ## Phase 5: Branching and Checkout
 
 ### Q5.1
