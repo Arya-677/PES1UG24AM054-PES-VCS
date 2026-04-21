@@ -16,6 +16,9 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
+// Forward declaration (implemented in object.c)
+int object_write(ObjectType type, const void *data, size_t len, ObjectID *id_out);
+
 // ─── Mode Constants ─────────────────────────────────────────────────────────
 
 #define MODE_FILE      0100644
@@ -83,6 +86,105 @@ static int compare_tree_entries(const void *a, const void *b) {
     return strcmp(((const TreeEntry *)a)->name, ((const TreeEntry *)b)->name);
 }
 
+typedef struct {
+    uint32_t mode;
+    ObjectID hash;
+    char path[512];
+} TreeIndexEntry;
+
+typedef struct {
+    TreeIndexEntry entries[MAX_TREE_ENTRIES];
+    int count;
+} TreeIndexSnapshot;
+
+static int tree_has_entry(const Tree *tree, const char *name) {
+    for (int i = 0; i < tree->count; i++) {
+        if (strcmp(tree->entries[i].name, name) == 0) return 1;
+    }
+    return 0;
+}
+
+static int load_tree_index(TreeIndexSnapshot *snapshot) {
+    snapshot->count = 0;
+
+    FILE *f = fopen(INDEX_FILE, "r");
+    if (!f) return -1;
+
+    while (snapshot->count < MAX_TREE_ENTRIES) {
+        TreeIndexEntry *entry = &snapshot->entries[snapshot->count];
+        char hex[HASH_HEX_SIZE + 1];
+        unsigned long long mtime_sec;
+        unsigned int size;
+
+        int fields = fscanf(f, "%o %64s %llu %u %511[^\n]\n",
+                            &entry->mode, hex, &mtime_sec, &size, entry->path);
+        if (fields == EOF) break;
+        if (fields != 5 || hex_to_hash(hex, &entry->hash) != 0) {
+            fclose(f);
+            return -1;
+        }
+
+        snapshot->count++;
+        (void)mtime_sec;
+        (void)size;
+    }
+
+    fclose(f);
+    return 0;
+}
+
+static int build_tree_level(const TreeIndexSnapshot *index, const char *prefix, ObjectID *id_out) {
+    Tree tree = {0};
+    size_t prefix_len = strlen(prefix);
+
+    for (int i = 0; i < index->count; i++) {
+        const TreeIndexEntry *entry = &index->entries[i];
+        if (strncmp(entry->path, prefix, prefix_len) != 0) continue;
+
+        const char *relative = entry->path + prefix_len;
+        if (*relative == '\0') continue;
+
+        const char *slash = strchr(relative, '/');
+
+        if (!slash) {
+            if (tree.count >= MAX_TREE_ENTRIES) return -1;
+            TreeEntry *tree_entry = &tree.entries[tree.count];
+            tree_entry->mode = entry->mode;
+            tree_entry->hash = entry->hash;
+            snprintf(tree_entry->name, sizeof(tree_entry->name), "%s", relative);
+            tree.count++;
+            continue;
+        }
+
+        size_t name_len = (size_t)(slash - relative);
+        if (name_len == 0 || name_len >= sizeof(((TreeEntry *)0)->name)) return -1;
+
+        char dir_name[256];
+        memcpy(dir_name, relative, name_len);
+        dir_name[name_len] = '\0';
+        if (tree_has_entry(&tree, dir_name)) continue;
+
+        if (tree.count >= MAX_TREE_ENTRIES) return -1;
+        TreeEntry *tree_entry = &tree.entries[tree.count];
+
+        char child_prefix[1024];
+        snprintf(child_prefix, sizeof(child_prefix), "%s%s/", prefix, dir_name);
+
+        tree_entry->mode = MODE_DIR;
+        snprintf(tree_entry->name, sizeof(tree_entry->name), "%s", dir_name);
+        if (build_tree_level(index, child_prefix, &tree_entry->hash) != 0) return -1;
+        tree.count++;
+    }
+
+    void *raw_tree = NULL;
+    size_t raw_len = 0;
+    if (tree_serialize(&tree, &raw_tree, &raw_len) != 0) return -1;
+
+    int rc = object_write(OBJ_TREE, raw_tree, raw_len, id_out);
+    free(raw_tree);
+    return rc;
+}
+
 // Serialize a Tree struct into binary format for storage.
 // Caller must free(*data_out).
 // Returns 0 on success, -1 on error.
@@ -130,8 +232,7 @@ int tree_serialize(const Tree *tree, void **data_out, size_t *len_out) {
 //
 // Returns 0 on success, -1 on error.
 int tree_from_index(ObjectID *id_out) {
-    // TODO: Implement recursive tree building
-    // (See Lab Appendix for logical steps)
-    (void)id_out;
-    return -1;
+    TreeIndexSnapshot index;
+    if (load_tree_index(&index) != 0) return -1;
+    return build_tree_level(&index, "", id_out);
 }
