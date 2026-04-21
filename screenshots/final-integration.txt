@@ -1,0 +1,82 @@
+$ ulimit -s 16384 && PES_AUTHOR="ARYA DEVANG <PES1UG24AM054>" make test-integration CFLAGS="-Wall -Wextra -O2 -I/opt/homebrew/opt/openssl@3/include" LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -lcrypto"
+=== Running integration tests ===
+bash test_sequence.sh
+=== PES-VCS Integration Test ===
+
+--- Repository Initialization ---
+Initialized empty PES repository in .pes/
+PASS: .pes/objects exists
+PASS: .pes/refs/heads exists
+PASS: .pes/HEAD exists
+
+--- Staging Files ---
+Status after add:
+Staged changes:
+  staged:     file.txt
+  staged:     hello.txt
+
+Unstaged changes:
+  (nothing to show)
+
+Untracked files:
+  (nothing to show)
+
+
+--- First Commit ---
+Committed: 9e4def87a5d0... Initial commit
+
+Log after first commit:
+commit 9e4def87a5d0de4f3593cedf3abdf96beda9fff4438ea26661a1001c3223a0a2
+Author: ARYA DEVANG <PES1UG24AM054>
+Date:   1776751012
+
+    Initial commit
+
+
+--- Second Commit ---
+Committed: 833dd82296d8... Update file.txt
+
+--- Third Commit ---
+Committed: 9c7abab50da6... Add farewell
+
+--- Full History ---
+commit 9c7abab50da6778ab10cfce8b2754bb2f10fbefc6409530b19e205380dff138b
+Author: ARYA DEVANG <PES1UG24AM054>
+Date:   1776751012
+
+    Add farewell
+
+commit 833dd82296d8aad7a63199729a4a805532917e14f499f56ed33e328eda0526c8
+Author: ARYA DEVANG <PES1UG24AM054>
+Date:   1776751012
+
+    Update file.txt
+
+commit 9e4def87a5d0de4f3593cedf3abdf96beda9fff4438ea26661a1001c3223a0a2
+Author: ARYA DEVANG <PES1UG24AM054>
+Date:   1776751012
+
+    Initial commit
+
+
+--- Reference Chain ---
+HEAD:
+ref: refs/heads/main
+refs/heads/main:
+9c7abab50da6778ab10cfce8b2754bb2f10fbefc6409530b19e205380dff138b
+
+--- Object Store ---
+Objects created:
+      10
+.pes/objects/0b/d69098bd9b9cc5934a610ab65da429b525361147faa7b5b922919e9a23143d
+.pes/objects/10/1f28a12274233d119fd3c8d7c7216054ddb5605f3bae21c6fb6ee3c4c7cbfa
+.pes/objects/58/a67ed1c161a4e89a110968310fe31e39920ef68d4c7c7e0d6695797533f50d
+.pes/objects/83/3dd82296d8aad7a63199729a4a805532917e14f499f56ed33e328eda0526c8
+.pes/objects/9c/7abab50da6778ab10cfce8b2754bb2f10fbefc6409530b19e205380dff138b
+.pes/objects/9e/4def87a5d0de4f3593cedf3abdf96beda9fff4438ea26661a1001c3223a0a2
+.pes/objects/ab/5824a9ec1ef505b5480b3e37cd50d9c80be55012cabe0ca572dbf959788299
+.pes/objects/b1/7b838c5951aa88c09635c5895ef7e08f7fa1974d901ce282f30e08de0ccd92
+.pes/objects/d0/7733c25d2d137b7574be8c5542b562bf48bafeaa3829f61f75b8d10d5350f9
+.pes/objects/db/07a1451ca9544dbf66d769b505377d765efae7adc6b97b75cc9d2b3b3da6ff
+
+=== All integration tests completed ===
