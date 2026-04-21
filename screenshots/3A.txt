@@ -1,0 +1,16 @@
+$ ../../pes init
+Initialized empty PES repository in .pes/
+$ echo "hello" > file1.txt
+$ echo "world" > file2.txt
+$ ../../pes add file1.txt file2.txt
+$ ../../pes status
+Staged changes:
+  staged:     file1.txt
+  staged:     file2.txt
+
+Unstaged changes:
+  (nothing to show)
+
+Untracked files:
+  (nothing to show)
+
