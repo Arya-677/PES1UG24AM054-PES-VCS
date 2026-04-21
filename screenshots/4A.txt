@@ -1,0 +1,19 @@
+$ ../../pes log
+commit 8b0587ff4a10b88b9030eba08da1fb1ae6650c578a000ecf848ba07d0af48cc0
+Author: ARYA DEVANG <PES1UG24AM054>
+Date:   1776751002
+
+    Add farewell
+
+commit 2be736bc6ca3e999a77db075f5c79d4f616427e19a02bfca034a406b70352b29
+Author: ARYA DEVANG <PES1UG24AM054>
+Date:   1776751002
+
+    Add world
+
+commit 37def126a373ffb927d5a11233762695d1ff7b39d5e75d4c35315b7628c1ef41
+Author: ARYA DEVANG <PES1UG24AM054>
+Date:   1776751002
+
+    Initial commit
+

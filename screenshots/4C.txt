@@ -1,0 +1,5 @@
+$ cat .pes/refs/heads/main
+8b0587ff4a10b88b9030eba08da1fb1ae6650c578a000ecf848ba07d0af48cc0
+
+$ cat .pes/HEAD
+ref: refs/heads/main
