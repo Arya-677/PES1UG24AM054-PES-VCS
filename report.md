@@ -28,6 +28,13 @@ Local screenshot artifacts are saved in the `screenshots/` directory as both ter
 - Phase 4C: `screenshots/4C.png`
 - Final integration test: `screenshots/final-integration.png`
 
+## Deliverable Layout
+
+- Source implementation: repository root (`object.c`, `tree.c`, `index.c`, `commit.c`)
+- Written answers: `report.md`
+- Screenshot images: `screenshots/*.png`
+- Matching raw terminal captures: `screenshots/*.txt`
+
 ## Notes
 
 - The assignment target platform is Ubuntu 22.04, where the provided build commands should work directly after installing OpenSSL development headers.
